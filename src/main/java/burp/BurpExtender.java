@@ -109,8 +109,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 			this.stdout.println(this.paramBodyMap);
 
 		}
-
-
+		// 加密操作并替换请求响应包
 		BurpConfig burpConfig = new BurpConfig();
 		String cryptoForRequest = burpConfig.getProperty("cryptoForRequest");
 		String cryptoForResponse = burpConfig.getProperty("cryptoForResponse");
@@ -119,7 +118,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 			byte[] newRequest = dynamicReplaceRequestProcess(returnValue, iHttpRequestResponse, this.paramBodyMap, this.paramHeaderMap, this.paramUrlMap);
 			iHttpRequestResponse.setRequest(newRequest);
 		} else if (cryptoForResponse.contains("true") && !messageIsRequest && toolFlag == IBurpExtenderCallbacks.TOOL_REPEATER) {
-			String returnValue = dynamicCryptoResponseProcess(this.paramBodyMap, this.paramHeaderMap);
+			String returnValue = dynamicCryptoResponseProcess(iHttpRequestResponse, this.paramBodyMap, this.paramHeaderMap);
 			byte[] newResponse = dynamicReplaceResponseProcess(returnValue, iHttpRequestResponse,paramBodyMap, paramHeaderMap);
 			iHttpRequestResponse.setResponse(newResponse);
 		}
@@ -202,7 +201,6 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 		String body = helpers.bytesToString(Arrays.copyOfRange(reqByte, iRequestInfo.getBodyOffset(), reqByte.length));
 
 		String returnValue = new String();
-
 		BurpConfig burpConfig = new BurpConfig();
 		String cryptoRequestMethod = burpConfig.getProperty("cryptoRequestMethod");
 		String[] cryptoRequestParams = burpConfig.getProperty("cryptoRequestParams").split(",");
@@ -250,7 +248,11 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 	}
 
 	// 20240325 动态解密响应中的值
-	private String dynamicCryptoResponseProcess(Map<String, List<String>> paramBodyMap, Map<String, List<String>> paramHeaderMap){
+	private String dynamicCryptoResponseProcess(IHttpRequestResponse iHttpRequestResponse, Map<String, List<String>> paramBodyMap, Map<String, List<String>> paramHeaderMap){
+		IResponseInfo iResponseInfo = this.helpers.analyzeResponse(iHttpRequestResponse.getResponse());
+		byte[] reqByte = iHttpRequestResponse.getResponse();
+		String body = helpers.bytesToString(Arrays.copyOfRange(reqByte, iResponseInfo.getBodyOffset(), reqByte.length));
+
 		String returnValue = new String();
 		BurpConfig burpConfig = new BurpConfig();
 		String cryptoResponseMethod = burpConfig.getProperty("cryptoResponseMethod");
@@ -279,13 +281,16 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 				case "body":
 					values = paramBodyMap.get(key);
 					break;
+				case "all":
+					values = Collections.singletonList(body);
+					break;
 			}
 			if (values != null) {
 				allParams.append(String.join("", values));
 			}
 		}
 		try {
-			returnValue = iParamCrypto.encryptParam(allParams.toString());
+			returnValue = iParamCrypto.decryptParam(allParams.toString());
 		} catch (Exception e) {
 			System.out.println(e);
 		}
