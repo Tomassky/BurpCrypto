@@ -8,15 +8,15 @@ public class BurpConfig {
 
     public BurpConfig() {
         properties = new Properties();
-        ClassLoader classLoader = BurpConfig.class.getClassLoader();
-        try (InputStream is = classLoader.getResourceAsStream("burp.config")) {
-            if (is != null) {
-                properties.load(is);
-            } else {
-                throw new FileNotFoundException("Property file 'burp.config' not found in the classpath");
-            }
-        } catch (Exception e) {
-            System.out.println(e);
+        // 20240326 修改获取配置的代码，从工作目录获取，跟Burpsuite同个目录，change the way to get the properties, obtain the properties from the current workspace, in the same directory of the Burpsuite
+        String currentDir = System.getProperty("user.dir");
+        File configFile = new File(currentDir, "burp.config");
+        try (InputStream is = new FileInputStream(configFile)) {
+            properties.load(is);
+        } catch (FileNotFoundException e) {
+            System.out.println("Property file 'burp.config' not found in the current directory: " + configFile.getAbsolutePath());
+        } catch (IOException e) {
+            System.out.println("Error reading 'burp.config' from the current directory: " + e.getMessage());
         }
     }
     public String getProperty(String key){

@@ -59,8 +59,19 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 
 	public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse iHttpRequestResponse) {
 
-		// 处理请求响应内容，请求包转换为3个Map，响应包转换为2个Map
-		if (messageIsRequest && toolFlag == IBurpExtenderCallbacks.TOOL_REPEATER) {
+		BurpConfig burpConfig = new BurpConfig();
+		String cryptoForRequest = burpConfig.getProperty("cryptoForRequest");
+		String cryptoForResponse = burpConfig.getProperty("cryptoForResponse");
+		String cryptoForRequestHost = burpConfig.getProperty("cryptoHost");
+
+		// 20240325 通过requestHost去判断请求响应包如果不是范围内的直接返回，use requestHost to judge the host from request/response package use requestHost and if not then return it
+		String requestHost = this.helpers.analyzeRequest(iHttpRequestResponse).getUrl().getHost();
+		if(!requestHost.equals(cryptoForRequestHost)){
+			return;
+		}
+
+		// 20240325 处理请求响应内容，请求包转换为3个Map，响应包转换为2个Map，handle request/response package, request will generate three maps, the response will generate two maps
+		if (messageIsRequest && (toolFlag == IBurpExtenderCallbacks.TOOL_REPEATER || toolFlag == IBurpExtenderCallbacks.TOOL_PROXY)) {
 			IRequestInfo iRequestInfo = this.helpers.analyzeRequest(iHttpRequestResponse);
 			IParamParse iParamParseHeader = new ParamParseImpl();
 			IParamParse iParamParseUrl = new ParamParseImpl();
@@ -72,8 +83,8 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 			this.paramHeaderMap = iParamParseHeader.generateParamMap(iRequestInfo.getHeaders());
 			this.paramUrlList = iParamParseUrl.generateParamList(iRequestInfo.getUrl().getQuery());
 			this.paramUrlMap = iParamParseUrl.generateParamMap(iRequestInfo.getUrl().getQuery());
-			this.stdout.println(this.paramHeaderMap);
-			this.stdout.println(this.paramUrlMap);
+			//this.stdout.println(this.paramHeaderMap);
+			//this.stdout.println(this.paramUrlMap);
 
 			byte contentType = iRequestInfo.getContentType();
 			byte[] reqByte = iHttpRequestResponse.getRequest();
@@ -87,15 +98,15 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 			}
 			this.paramBodyMap = iParamParse.generateParamMap(requestData);
 			this.paramBodyList = iParamParse.generateParamList(requestData);
-			this.stdout.println(this.paramBodyMap);
+			//this.stdout.println(this.paramBodyMap);
 
-		} else if(!messageIsRequest && toolFlag == IBurpExtenderCallbacks.TOOL_REPEATER){
+		} else if(!messageIsRequest && (toolFlag == IBurpExtenderCallbacks.TOOL_REPEATER || toolFlag == IBurpExtenderCallbacks.TOOL_PROXY)){
 			IResponseInfo iResponseInfo = this.helpers.analyzeResponse(iHttpRequestResponse.getResponse());
 			IParamParse iParamParseHeader = new ParamParseImpl();
 
 			iParamParseHeader = new HeaderParseWrapper(iParamParseHeader);
 			this.paramHeaderMap = iParamParseHeader.generateParamMap(iResponseInfo.getHeaders());
-			this.stdout.println(this.paramHeaderMap);
+			//this.stdout.println(this.paramHeaderMap);
 
 			byte[] reqByte = iHttpRequestResponse.getResponse();
 			String responseData = helpers.bytesToString(Arrays.copyOfRange(reqByte, iResponseInfo.getBodyOffset(), reqByte.length));
@@ -106,19 +117,19 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 			} else if (iResponseInfo.getInferredMimeType().toLowerCase().contains("text")) {
 				this.paramBodyMap.put("all", Collections.singletonList(responseData));
 			}
-			this.stdout.println(this.paramBodyMap);
+			//this.stdout.println(this.paramBodyMap);
 
 		}
 		// 加密操作并替换请求响应包，Encryption Operatation and Replace the Request and Response Package
-		BurpConfig burpConfig = new BurpConfig();
-		String cryptoForRequest = burpConfig.getProperty("cryptoForRequest");
-		String cryptoForResponse = burpConfig.getProperty("cryptoForResponse");
+
 		if (cryptoForRequest.contains("true") && messageIsRequest && toolFlag == IBurpExtenderCallbacks.TOOL_REPEATER){
 			String returnValue = dynamicCryptoRequestProcess(iHttpRequestResponse, this.paramBodyMap, this.paramHeaderMap, this.paramUrlMap);
+			this.stdout.println("RequestCrypto return Value: " + returnValue);
 			byte[] newRequest = dynamicReplaceRequestProcess(returnValue, iHttpRequestResponse, this.paramBodyMap, this.paramHeaderMap, this.paramUrlMap);
 			iHttpRequestResponse.setRequest(newRequest);
 		} else if (cryptoForResponse.contains("true") && !messageIsRequest && toolFlag == IBurpExtenderCallbacks.TOOL_REPEATER) {
 			String returnValue = dynamicCryptoResponseProcess(iHttpRequestResponse, this.paramBodyMap, this.paramHeaderMap);
+			this.stdout.println("ResponseCrypto return Value: " + returnValue);
 			byte[] newResponse = dynamicReplaceResponseProcess(returnValue, iHttpRequestResponse,paramBodyMap, paramHeaderMap);
 			iHttpRequestResponse.setResponse(newResponse);
 		}
