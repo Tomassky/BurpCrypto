@@ -212,6 +212,8 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 			iParamCrypto = new AESParamCryptoWrapper(iParamCrypto);
 		}else if ("Sekiro".equals(cryptoRequestMethod)){
 			iParamCrypto = new SekiroParamCryptoWrapper(iParamCrypto);
+		}else if ("MD5".equals(cryptoRequestMethod)){
+			iParamCrypto = new MD5ParamCryptoWrapper(iParamCrypto);
 		}
 		StringBuilder allParams = new StringBuilder();
 		for (String param : cryptoRequestParams) {
@@ -265,6 +267,8 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 			iParamCrypto = new AESParamCryptoWrapper(iParamCrypto);
 		}else if ("Sekiro".equals(cryptoResponseMethod)){
 			iParamCrypto = new SekiroParamCryptoWrapper(iParamCrypto);
+		}else if ("MD5".equals(cryptoResponseMethod)){
+			iParamCrypto = new MD5ParamCryptoWrapper(iParamCrypto);
 		}
 
 		StringBuilder allParams = new StringBuilder();
