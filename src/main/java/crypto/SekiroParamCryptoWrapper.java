@@ -24,6 +24,7 @@ public class SekiroParamCryptoWrapper implements IParamCrypto{
         return sendRequest(inEncryptData, "decrypt");
     }
 
+    // 此处是向sekiro服务发送加解密数据请求(可以选择本地或远程服务)，this way is sending encrypt or decrypt request to the serkio server(which can chose the local or remote server)
     private String sendRequest(String data, String action) {
         try {
             URL url = new URL("http://127.0.0.1:5612/business-demo/invoke?group=sekiro&action=" + action + "&text=" + data);

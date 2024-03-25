@@ -42,7 +42,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
     	helpers=callbacks.getHelpers();
         callbacks.setExtensionName("BurpCrypto");
 
-		/* 可以实现启动和卸载sekiro服务，但是sekiro服务无法被正常访问到
+		/* 可以实现启动和卸载sekiro服务，但是sekiro服务无法被正常访问到, The serkiro server can be run or unload, but it didn't can be access by.
         try {
             Bootstrap.main(null);
         } catch (Exception e) {
@@ -53,7 +53,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
     }
 	@Override
 	public void extensionUnloaded() {
-		Bootstrap.shutdown(); // 停止sekiro服务
+		Bootstrap.shutdown(); // 停止sekiro服务, shutdown the serkiro server
 		System.out.println("Sekiro service has been successfully shutdown.");
 	}
 
@@ -109,7 +109,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 			this.stdout.println(this.paramBodyMap);
 
 		}
-		// 加密操作并替换请求响应包
+		// 加密操作并替换请求响应包，Encryption Operatation and Replace the Request and Response Package
 		BurpConfig burpConfig = new BurpConfig();
 		String cryptoForRequest = burpConfig.getProperty("cryptoForRequest");
 		String cryptoForResponse = burpConfig.getProperty("cryptoForResponse");
@@ -125,7 +125,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 
 	}
 
-	// 20240325 动态替换请求中的值
+	// 20240325 动态替换请求中的值, dynamic replace request package
 	private byte[] dynamicReplaceRequestProcess(String replaceValues, IHttpRequestResponse iHttpRequestResponse, Map<String, List<String>> paramBodyMap, Map<String, List<String>> paramHeaderMap, Map<String, List<String>> paramUrlMap){
 		IRequestInfo iRequestInfo = this.helpers.analyzeRequest(iHttpRequestResponse);
 		List<String> headers = iRequestInfo.getHeaders();
@@ -163,7 +163,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
         return this.helpers.buildHttpMessage(headers, bodyString.getBytes());
 	}
 
-	// 20240325 动态替换响应中的值
+	// 20240325 动态替换响应中的值，dynamic replace response package
 	private byte[] dynamicReplaceResponseProcess(String replaceValues, IHttpRequestResponse iHttpRequestResponse, Map<String, List<String>> paramBodyMap, Map<String, List<String>> paramHeaderMap){
 		IResponseInfo iResponseInfo = this.helpers.analyzeResponse(iHttpRequestResponse.getResponse());
 		List<String> headers = iResponseInfo.getHeaders();
@@ -194,7 +194,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 
 	}
 
-	// 20240325 动态加密请求中的值
+	// 20240325 动态加密请求中的值，dynamic encrypt the value in request package
 	private String dynamicCryptoRequestProcess(IHttpRequestResponse iHttpRequestResponse, Map<String, List<String>> paramBodyMap, Map<String, List<String>> paramHeaderMap, Map<String, List<String>> paramUrlMap){
 		IRequestInfo iRequestInfo = this.helpers.analyzeRequest(iHttpRequestResponse.getRequest());
 		byte[] reqByte = iHttpRequestResponse.getRequest();
@@ -247,7 +247,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 		return returnValue;
 	}
 
-	// 20240325 动态解密响应中的值
+	// 20240325 动态解密响应中的值, dynamic decrypt the value in response package
 	private String dynamicCryptoResponseProcess(IHttpRequestResponse iHttpRequestResponse, Map<String, List<String>> paramBodyMap, Map<String, List<String>> paramHeaderMap){
 		IResponseInfo iResponseInfo = this.helpers.analyzeResponse(iHttpRequestResponse.getResponse());
 		byte[] reqByte = iHttpRequestResponse.getResponse();

@@ -60,7 +60,7 @@ public class Bootstrap {
             protected void initChannel(SocketChannel socketChannel) {
                 Session.newSession(socketChannel);
                 List<ProtocolMatcher> matchers = Arrays.asList(
-                        // sekiro底层协议
+                        // sekiro底层协议, sekiro underlying protocol
                         new SekiroMatcher(), new HttpMatcher());
 
                 ProtocolDetector protocolDetector = new ProtocolDetector((ctx, buf) -> {
