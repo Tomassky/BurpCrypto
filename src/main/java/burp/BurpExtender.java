@@ -167,6 +167,10 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 					matchValues = String.join("", paramBodyMap.get(key));
 					bodyString = ReplaceUtils.replaceBody(body, matchValues, replaceValues);
 					break;
+				case "all":
+					matchValues = body;
+					bodyString = ReplaceUtils.replaceBody(body, matchValues, replaceValues);
+					break;
 			}
 		}
 		if (bodyString.isEmpty()){
@@ -200,10 +204,16 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 					matchValues = String.join("", paramBodyMap.get(key));
 					bodyString = ReplaceUtils.replaceBody(body, matchValues, replaceValues);
 					break;
+				case "all":
+					matchValues = bodyString;
+					bodyString = ReplaceUtils.replaceBody(body,matchValues,replaceValues);
+					break;
 			}
 		}
+		if (bodyString.isEmpty()){
+			return this.helpers.buildHttpMessage(headers, body.getBytes());
+		}
 		return this.helpers.buildHttpMessage(headers, bodyString.getBytes());
-
 	}
 
 	// 20240325 动态加密请求中的值，dynamic encrypt the value in request package

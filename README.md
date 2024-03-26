@@ -37,5 +37,7 @@
 
 - Proxy -> Qucik Crypto/Get PlainText
 - Repeater -> Auto Crypto
+- Mind Mapping
+  - Burpsuite_Sekiro.xmind(About the Serkiro and the processProxyMessage()/.processHttpMessage())
 
 ## Or you can look for the DEVELOP.md file

@@ -6,22 +6,21 @@
 
 2、Encrypted Sign：~~all body、Single sign(based on headers)、single sign(based on body)~~
 
-3、Request and Response package：~~entire request body crypto、some params cryptoed in request body~~、entire response body、some params crypro in response body
+3、Request and Response package：~~entire request body crypto、some params cryptoed in request body、entire response body、some params crypro in response body~~
 
 4、Crypto class：~~base64、aes、md5、JSEngine~~、sekiro
 
 5、The encryption client: web、miniprogram、app
 
-6、Different TOOL: Proxy、Repeater
+6、Different TOOL: ~~Proxy、Repeater~~
 
 ### problem
 
-1、Only crytoed for the exist param, not for the unexist param
+1、~~Only cryptoed for the exist param, not for the unexist param~~ -> There won't be this scene
 
-2、Does not have some test data for the respone mode、the mitmproxy logic in response mode
+2、Does not have some test data for the respone mode、~~the mitmproxy logic in response mode~~
 
 3、The sekiro could not start in a normal server
-
 
 ## Codeing Example
 
