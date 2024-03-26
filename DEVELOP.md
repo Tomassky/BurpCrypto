@@ -12,6 +12,8 @@
 
 5、The encryption client: web、miniprogram、app
 
+6、Different TOOL: Proxy、Repeater
+
 ### problem
 
 1、Only crytoed for the exist param, not for the unexist param

@@ -35,5 +35,7 @@
   - miniprogram
   - app
 
+- Proxy -> Qucik Crypto/Get PlainText
+- Repeater -> Auto Crypto
 
 ## Or you can look for the DEVELOP.md file

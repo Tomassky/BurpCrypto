@@ -41,7 +41,7 @@ public class BurpCryptoMenuFactory implements IContextMenuFactory{
                 String resultText = handleCryptoDispatch(selectedText, method);
                 if (resultText != null && !resultText.isEmpty()) {
                     ShowCopiableMessage(resultText, "This message " + method + " is: ");
-                    iHttpRequestResponse.setComment(resultText);
+                    //iHttpRequestResponse.setComment(resultText);
                 } else {
                     JOptionPane.showMessageDialog(null, "Not found!");
                 }
