@@ -38,6 +38,7 @@
 - Proxy -> Qucik Crypto/Get PlainText
 - Repeater -> Auto Crypto
 - Mind Mapping
-  - Burpsuite_Sekiro.xmind(About the Serkiro in Burpsuite and the processProxyMessage()/processHttpMessage())
+  - Burpsuite_Sekiro.xmind(about the serkiro in burpsuite and the processProxyMessage()/processHttpMessage())
+  - sekiro-open-startup.xmind(about the serkiro server)
 
 ## Or you can look for the DEVELOP.md file
