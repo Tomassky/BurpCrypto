@@ -49,6 +49,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
             throw new RuntimeException(e);
         }
 		callbacks.registerExtensionStateListener(this::extensionUnloaded);*/
+		callbacks.registerContextMenuFactory(new BurpCryptoMenuFactory());
         callbacks.registerHttpListener(this::processHttpMessage);
     }
 	@Override
@@ -71,7 +72,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 		}
 
 		// 20240325 处理请求响应内容，请求包转换为3个Map，响应包转换为2个Map，handle request/response package, request will generate three maps, the response will generate two maps
-		if (messageIsRequest && (toolFlag == IBurpExtenderCallbacks.TOOL_REPEATER || toolFlag == IBurpExtenderCallbacks.TOOL_PROXY)) {
+		if (messageIsRequest && toolFlag == IBurpExtenderCallbacks.TOOL_REPEATER ) {
 			IRequestInfo iRequestInfo = this.helpers.analyzeRequest(iHttpRequestResponse);
 			IParamParse iParamParseHeader = new ParamParseImpl();
 			IParamParse iParamParseUrl = new ParamParseImpl();
@@ -100,7 +101,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 			this.paramBodyList = iParamParse.generateParamList(requestData);
 			//this.stdout.println(this.paramBodyMap);
 
-		} else if(!messageIsRequest && (toolFlag == IBurpExtenderCallbacks.TOOL_REPEATER || toolFlag == IBurpExtenderCallbacks.TOOL_PROXY)){
+		} else if(!messageIsRequest && toolFlag == IBurpExtenderCallbacks.TOOL_REPEATER){
 			IResponseInfo iResponseInfo = this.helpers.analyzeResponse(iHttpRequestResponse.getResponse());
 			IParamParse iParamParseHeader = new ParamParseImpl();
 
@@ -225,6 +226,9 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 			iParamCrypto = new SekiroParamCryptoWrapper(iParamCrypto);
 		}else if ("MD5".equals(cryptoRequestMethod)){
 			iParamCrypto = new MD5ParamCryptoWrapper(iParamCrypto);
+		} else if ("JSEngine".equals(cryptoRequestMethod)) {
+			iParamCrypto = new JSEngineParamCryptoWrapper(iParamCrypto);
+
 		}
 		StringBuilder allParams = new StringBuilder();
 		for (String param : cryptoRequestParams) {
@@ -280,6 +284,8 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 			iParamCrypto = new SekiroParamCryptoWrapper(iParamCrypto);
 		}else if ("MD5".equals(cryptoResponseMethod)){
 			iParamCrypto = new MD5ParamCryptoWrapper(iParamCrypto);
+		} else if ("JSEngine".equals(cryptoResponseMethod)) {
+			iParamCrypto = new JSEngineParamCryptoWrapper(iParamCrypto);
 		}
 
 		StringBuilder allParams = new StringBuilder();

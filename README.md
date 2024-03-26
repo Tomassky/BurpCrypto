@@ -27,6 +27,7 @@
   - base64
   - aes
   - md5
+  - JSEngine
   - sekiro
 
 - The encryption client: 

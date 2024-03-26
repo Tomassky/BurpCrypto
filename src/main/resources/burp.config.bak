@@ -11,3 +11,6 @@ cryptoResponseParams = header(Connection)
 cryptoResponseMethod = Base64
 cryptoResponString = header(Connection)
 
+
+encryptScript = ''''''
+decryptScript = ''''''

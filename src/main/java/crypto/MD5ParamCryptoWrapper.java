@@ -25,7 +25,6 @@ public class MD5ParamCryptoWrapper implements IParamCrypto {
         throw new UnsupportedOperationException("MD5 is irreversible and cannot decrypt");
     }
 
-    // 将字节数组转换为十六进制字符串
     private static String bytesToHex(byte[] hash) {
         StringBuilder hexString = new StringBuilder(2 * hash.length);
         for (int i = 0; i < hash.length; i++) {

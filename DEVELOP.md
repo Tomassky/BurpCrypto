@@ -8,7 +8,7 @@
 
 3、Request and Response package：~~entire request body crypto、some params cryptoed in request body~~、entire response body、some params crypro in response body
 
-4、Crypto class：~~base64、aes、md5~~、sekiro
+4、Crypto class：~~base64、aes、md5、JSEngine~~、sekiro
 
 5、The encryption client: web、miniprogram、app
 
