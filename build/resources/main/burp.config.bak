@@ -1,4 +1,4 @@
-cryptoHost = 42.194.137.196:443
+cryptoHost = xx.xx.xx.xx:443
 
 cryptoForRequest = true
 cryptoRequestParams = url(aa),text(:metapractice)
@@ -6,7 +6,7 @@ cryptoRequestMethod = Base64
 cryptoRequestString = body(Sign)
 
 cryptoForResponse = false
-cryptoForResponseHost = 42.194.137.196:443
+cryptoForResponseHost = xx.xx.xx.xx:443
 cryptoResponseParams = header(Connection)
 cryptoResponseMethod = Base64
 cryptoResponString = header(Connection)
